@@ -44,9 +44,9 @@ double f(int i, double x1, double x2, double x3, double x4, double x5)
     case 3:
         return -x4 + 2 * (k4 * pow(x2, 2));
     default:
-        return -1;
+        return 0;
     }
-    return -1;
+    return 0;
 }
 
 /// @brief partial derivative approximation ( ∆x = 2e-3 )
@@ -75,7 +75,7 @@ double partial_derivative(double (*func)(int, double, double, double, double, do
         return (func(i, x1, x2, x3, x4, x5 * (1 + h)) - func(i, x1, x2, x3, x4, x5)) / (h * x5);
 
     default:
-        return -1;
+        return 0;
     }
 }
 
