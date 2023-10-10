@@ -1,4 +1,4 @@
-#include "../matrix.h"
+#include "../include/matrix.h"
 using namespace std;
 
 int MAX_ITERS = 1000;

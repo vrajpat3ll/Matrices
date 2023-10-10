@@ -1,4 +1,4 @@
-#include "../matrix.h"
+#include "../include/matrix.h"
 
 const double h = 2e-3;
 const double x10 = 1;
