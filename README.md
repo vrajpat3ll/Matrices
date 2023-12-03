@@ -23,7 +23,8 @@ This repository contains source codes for the functionalities which are used in 
 Each index (i) corresponds to a different non-linear equation.
 <br></br>
 <h2>Interpolation</h2>
-Not yet started.
+Lagrange Interpolation is done!
+Spline interpolation's implementation not done!
 <br></br>
 More might be added soon!
 <br>
@@ -33,6 +34,7 @@ More might be added soon!
 <br>
 <a href = "https://www.google.com/search?q=ternary+operators+in+cpp&sca_esv=579920261&sxsrf=AM9HkKnf-FRDuZ0gGItDxA63hqDSNTaETw%3A1699305222620&ei=BldJZZTEJZKa4-EPlfK92As&ved=0ahUKEwiU36KhpbCCAxUSzTgGHRV5D7sQ4dUDCBA&uact=5&oq=ternary+operators+in+cpp&gs_lp=Egxnd3Mtd2l6LXNlcnAiGHRlcm5hcnkgb3BlcmF0b3JzIGluIGNwcDIFEAAYgAQyBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yCBAAGIoFGIYDSMAlUNsGWPYgcAJ4AZABAJgB-AGgAbMNqgEFMC4xLje4AQPIAQD4AQHCAgoQABhHGNYEGLADwgIKEAAYigUYsAMYQ8ICBxAAGIoFGEPCAgoQABiABBgUGIcCwgIHEAAYDRiABMICCRAAGA0YgAQYCsICChAAGBYYHhgPGAriAwQYACBBiAYBkAYK&sclient=gws-wiz-serp">
 DO NOT USE TERNARY OPERATORS IN THIS REPOSITORY. YOU WANNA KNOW WHY? ASK THAT GODDAMNED OPERATOR WHY IT DOESN'T WORK.</a>
+<a> Design decision: i did't know to link header and its implementation(cpp) files, so i just worte the implementation in the header files iteslf. Pls do not kill me! 
 <!-- # Workflow
 if ( function.works() && function.belongs_to(matrix) )<br>
 {

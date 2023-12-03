@@ -120,7 +120,7 @@ double lagrangeInterpolation(std::vector<double> f_x, std::vector<double> points
         value += L_i(i, x, N_order, points) * f_x[i];
     return value;
 }
-
-double splineInterpolation() {}
+//TODO: Spline interpolation implementation
+double splineInterpolation{};
 
 #endif
