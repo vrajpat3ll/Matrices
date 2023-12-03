@@ -2,7 +2,7 @@ import numpy as np
 
 TOLERANCE = 1e-6
 MAX_ITER = 1000
-DELX = 1e-4
+DELX = 1e-9
 
 
 def f(x):

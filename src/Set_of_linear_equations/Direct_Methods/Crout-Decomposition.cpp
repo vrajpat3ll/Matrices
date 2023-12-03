@@ -4,8 +4,9 @@ int main()
 {
     matrix A;
     cin >> A;
-    matrix Lower = LUdecompose_crout(A).first;
-    matrix Upper = LUdecompose_crout(A).second;
+    pair<matrix,matrix> LU = LUdecompose_crout(A);
+    matrix Lower = LU.first;
+    matrix Upper = LU.second;
     cout << Lower << endl;
     cout << Upper << endl;
 }

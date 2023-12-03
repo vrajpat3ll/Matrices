@@ -1,6 +1,6 @@
 MAX_ITER = 1000
 DELX = 1
-TOLERANCE = 1e-12
+TOLERANCE = 1e-15
 
 
 def bracket_roots(f):
@@ -10,7 +10,7 @@ def bracket_roots(f):
     return x, x + DELX
 
 
-def f(x):
+def f(x: float):
     return x**2 - 2 * x + 1
 
 
@@ -23,12 +23,13 @@ def bisection_method():
         y = f(Xnew)
 
         print("-" * 81)
-        print(i, "\t\t|\t", format(Xnew, ".6f"),"\t|\t", format(y), "\t\t|", sep="")
-        
+        print(i, "\t\t|\t", format(Xnew, ".6f"),
+              "\t|\t", format(y), "\t\t|", sep="")
+
         if abs(y) <= TOLERANCE:
             print("-" * 81)
             return
-        
+
         if f(xp) < 0:
             if y < 0:
                 xp = Xnew

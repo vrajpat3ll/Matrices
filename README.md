@@ -29,7 +29,10 @@ More might be added soon!
 <br>
 <br>
 <br>
-
+<h1>IMPORTANT NOTE</h1>
+<br>
+<a href = "https://www.google.com/search?q=ternary+operators+in+cpp&sca_esv=579920261&sxsrf=AM9HkKnf-FRDuZ0gGItDxA63hqDSNTaETw%3A1699305222620&ei=BldJZZTEJZKa4-EPlfK92As&ved=0ahUKEwiU36KhpbCCAxUSzTgGHRV5D7sQ4dUDCBA&uact=5&oq=ternary+operators+in+cpp&gs_lp=Egxnd3Mtd2l6LXNlcnAiGHRlcm5hcnkgb3BlcmF0b3JzIGluIGNwcDIFEAAYgAQyBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yCBAAGIoFGIYDSMAlUNsGWPYgcAJ4AZABAJgB-AGgAbMNqgEFMC4xLje4AQPIAQD4AQHCAgoQABhHGNYEGLADwgIKEAAYigUYsAMYQ8ICBxAAGIoFGEPCAgoQABiABBgUGIcCwgIHEAAYDRiABMICCRAAGA0YgAQYCsICChAAGBYYHhgPGAriAwQYACBBiAYBkAYK&sclient=gws-wiz-serp">
+DO NOT USE TERNARY OPERATORS IN THIS REPOSITORY. YOU WANNA KNOW WHY? ASK THAT GODDAMNED OPERATOR WHY IT DOESN'T WORK.</a>
 <!-- # Workflow
 if ( function.works() && function.belongs_to(matrix) )<br>
 {

@@ -1,4 +1,7 @@
-#include "../include/matrix.h"
+#define newton_raphson_constraint_
+// #ifndef newton_raphson_
+#include "../../include/matrix.h"
+// #endif
 using namespace std;
 
 int MAX_ITERS = 1000;
@@ -9,7 +12,7 @@ const int MAX_ITER = 100;
 
 double f(int i, double x1, double x2, double x3, double x4, double x5);
 
-double partial_derivative(double (*func)(int, double, double, double, double, double), int i, int j, double x1, double x2, double x3, double x4, double x5);
+double partial_derivative(double (*func)(int, double, double, double, double, double), double deltaVar, int indexOfFunction, int indexOfVariable, double x1, double x2, double x3, double x4, double x5);
 
 vector<double> &solveEQ(double (*f)(int, double, double, double, double, double), vector<double> &guess, vector<double> &root, int N_unknowns);
 
@@ -17,16 +20,16 @@ template <class T>
 ostream &operator<<(ostream &out, vector<T> &v);
 
 // MAIN FUNCTION
-int main()
-{
-    vector<double> guess(4, 1);
-    vector<double> root = {0.318866, 0.783884, 0.534982, 0.491579};
-    cout << "---------------------------------------------------------------------------------------------------" << endl;
-    cout << "Iteration\t|\tRoot\t\t\t|\tResidue\t\t|\tDX" << endl;
-    cout << "---------------------------------------------------------------------------------------------------" << endl;
-    solveEQ(f, guess, root, 4);
-    cout << guess;
-}
+// int main()
+// {
+//     vector<double> guess(4, 1);
+//     vector<double> root = {0.318866, 0.783884, 0.534982, 0.491579};
+//     cout << "---------------------------------------------------------------------------------------------------" << endl;
+//     cout << "Iteration\t|\tRoot\t\t\t|\tResidue\t\t|\tDX" << endl;
+//     cout << "---------------------------------------------------------------------------------------------------" << endl;
+//     solveEQ(f, guess, root, 4);
+//     cout << guess;
+// }
 
 /// @brief system of (usually) non-linear equations ( f(x_i,...) = 0 )
 /// @param i index of expression (from 0)
@@ -54,30 +57,31 @@ double f(int i, double x1, double x2, double x3, double x4, double x5)
     return 0; // 0 is returned because no value is to be calculated at that index
 }
 
-/// @brief partial derivative approximation ( ∆x = 2e-3 )
+/// @brief partial derivative approximation
 /// @param func function pointer of a function
-/// @param i index of expression
-/// @param j index of variable
+/// @param indexOfFunction index of expression
+/// @param indexOfVariable index of variable
+/// @param deltaVar change in variable for approximation (∆x)
 /// @param x1 variable 1
 /// @param x2 variable 2
 /// @param x3 variable 3
 /// @param x4 variable 4
 /// @param x5 variable 5
-/// @return df_i/dx_j
-double partial_derivative(double (*func)(int, double, double, double, double, double), int i, int j, double x1, double x2, double x3, double x4, double x5)
+/// @returns df_i/dx_j
+double partial_derivative(double (*func)(int, double, double, double, double, double), double deltaVar, int indexOfFunction, int indexOfVariable, double x1, double x2, double x3, double x4, double x5)
 {
-    switch (j)
+    switch (indexOfVariable)
     {
     case 0:
-        return (func(i, x1 * (1 + h), x2, x3, x4, x5) - func(i, x1, x2, x3, x4, x5)) / (h * x1);
+        return (func(indexOfFunction, x1 * (1 + deltaVar), x2, x3, x4, x5) - func(indexOfFunction, x1, x2, x3, x4, x5)) / (deltaVar * x1);
     case 1:
-        return (func(i, x1, x2 * (1 + h), x3, x4, x5) - func(i, x1, x2, x3, x4, x5)) / (h * x2);
+        return (func(indexOfFunction, x1, x2 * (1 + deltaVar), x3, x4, x5) - func(indexOfFunction, x1, x2, x3, x4, x5)) / (deltaVar * x2);
     case 2:
-        return (func(i, x1, x2, x3 * (1 + h), x4, x5) - func(i, x1, x2, x3, x4, x5)) / (h * x3);
+        return (func(indexOfFunction, x1, x2, x3 * (1 + deltaVar), x4, x5) - func(indexOfFunction, x1, x2, x3, x4, x5)) / (deltaVar * x3);
     case 3:
-        return (func(i, x1, x2, x3, x4 * (1 + h), x5) - func(i, x1, x2, x3, x4, x5)) / (h * x4);
+        return (func(indexOfFunction, x1, x2, x3, x4 * (1 + deltaVar), x5) - func(indexOfFunction, x1, x2, x3, x4, x5)) / (deltaVar * x4);
     case 4:
-        return (func(i, x1, x2, x3, x4, x5 * (1 + h)) - func(i, x1, x2, x3, x4, x5)) / (h * x5);
+        return (func(indexOfFunction, x1, x2, x3, x4, x5 * (1 + deltaVar)) - func(indexOfFunction, x1, x2, x3, x4, x5)) / (deltaVar * x5);
 
     default:
         return 0;
@@ -112,7 +116,7 @@ vector<double> &solveEQ(double (*f)(int, double, double, double, double, double)
         {
             for (int j = 0; j < N_unknowns; j++)
             {
-                Jacobian[i][j] = partial_derivative(f, i, j, guess[0], guess[1], guess[2], guess[3], guess[4]);
+                Jacobian[i][j] = partial_derivative(f, h, i, j, guess[0], guess[1], guess[2], guess[3], guess[4]);
             }
         }
 
@@ -142,7 +146,7 @@ vector<double> &solveEQ(double (*f)(int, double, double, double, double, double)
 
         cout << "___________________________________________________________________________________________________" << endl;
         cout << endl;
-        
+
         if (abs(DX[0][0]) <= 1e-4 && abs(DX[1][0]) <= 1e-4 && abs(DX[2][0]) <= 1e-4 && abs(DX[3][0]) <= 1e-4)
         {
             return guess;

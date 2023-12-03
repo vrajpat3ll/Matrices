@@ -4,8 +4,10 @@ import numpy as np
 TOLERANCE = 1e-6
 MAX_ITER = 1000
 
+
 def f(x):
     return x**2 - 2 * x + 1
+
 
 def secant_method():
     x1 = float(input("Enter first guess for root of function: "))

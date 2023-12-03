@@ -1,80 +1,86 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_ 1
 
-#include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
 
 class matrix
 {
-    int rows, columns;
-    vector<vector<double>> M;
+private:
+    int rows = 0;
+    int columns = 0;
+    std::vector<std::vector<double>> M;
 
 public:
-    matrix();
+    matrix() = default;
     matrix(int m, int n);
     matrix(int n);
+    int get_rows() { return this->rows; }
+    int get_columns() { return this->columns; }
 
-    /// @brief vector-like functionality
+    /// @brief std::vector-like functionality
     /// @param i index
     /// @return i-th row of matrix
-    vector<double> &operator[](int i) noexcept { return this->M[i]; }
-    friend istream &operator>>(istream &in, matrix &a);
-    friend ostream &operator<<(ostream &out, matrix &a);
-    bool operator==(matrix &a);
-    bool operator!=(matrix &a);
+    std::vector<double> &operator[](int i) noexcept { return this->M[i]; }
+    double &operator()(int i, int j) { return this->M[i][j]; }
+
+    friend std::istream &operator>>(std::istream &in, matrix &a);
+    friend std::ostream &operator<<(std::ostream &out, matrix &a);
     matrix operator+(matrix &a);
     matrix operator-(matrix &a);
     matrix operator*(const matrix &a) const;
     matrix operator/(double divisor);
+    matrix operator*(double multiplicand);
+    matrix operator^(int a);
 
+    bool operator==(matrix &a);
+    bool operator!=(matrix &a);
     matrix operator+=(matrix &a) { return (*this + a); }
     matrix operator-=(matrix &a) { return (*this - a); }
     matrix operator*=(matrix &a) { return (*this * a); }
-    matrix operator^(int a);
 
     bool isSquare();
     bool isRowvector();
     bool isColumnvector();
     bool isDiagonal();
-    friend pair<matrix, matrix> LUdecompose_crout(matrix &a);
-    friend pair<matrix, matrix> LUdecompose_dolittle(matrix &a);
-    friend matrix forward_sweep(matrix &, matrix &);
-    friend matrix backward_sweep(matrix &, matrix &);
-    friend matrix solveAXB(matrix &, matrix &);
-    matrix identity(int size);
+
+    friend std::pair<matrix, matrix> LUdecompose_crout(matrix &a);
+    friend std::pair<matrix, matrix> LUdecompose_dolittle(matrix &a);
+    friend matrix forwardSweep(matrix &, matrix &);
+    friend matrix backwardSweep(matrix &, matrix &);
+
     // not complete
     // friend matrix Thomas_for_tri_diagonal(matrix &a, matrix &b);
-    friend matrix solveAXB_gauss(matrix &A, matrix &B);
-    friend matrix transpose(matrix &A);
     double determinant();
     matrix cofactormatrix(int row, int col);
 };
 
-/// @brief default constructor (3X3 matrix)
-matrix::matrix()
+matrix identity_matrix(int size)
 {
-    rows = 3;
-    columns = 3;
-    this->M = vector<vector<double>>(rows, vector<double>(columns));
+    matrix b(size);
+    for (int i = 0; i < size; i++)
+        for (int j = 0; j < size; j++)
+            b[i][j] = ((i == j) ? 1 : 0);
+    return b;
 }
 
-/// @brief custom constructor (mXn matrix)
 /// @param m number of rows
 /// @param n number of columns
 matrix::matrix(int m, int n)
 {
     rows = m;
     columns = n;
-    this->M = vector<vector<double>>(rows, vector<double>(columns));
+    this->M = std::vector<std::vector<double>>(rows, std::vector<double>(columns));
 }
 
-/// @brief initialise a nXn square matrix
-/// @param n
+/// @param n number of rows and columns
 matrix::matrix(int n)
 {
     rows = n;
     columns = n;
-    this->M = vector<vector<double>>(rows, vector<double>(columns));
+    this->M = std::vector<std::vector<double>>(rows, std::vector<double>(columns));
 }
 
 bool matrix::isSquare()
@@ -101,26 +107,20 @@ bool matrix::isColumnvector()
 bool matrix::isDiagonal()
 {
     for (int i = 0; i < this->rows; i++)
-    {
         for (int j = 0; j < this->columns; j++)
-        {
             if (i != j && this->M[i][j] != 0)
             {
                 return false;
             }
-        }
-    }
     return true;
 }
 
-/// @brief decomposes a square matrix into a pair of lower-triangular and upper-triangular matrix using Crout's Decomposition
-/// such that L.U = Original Matrix
-/// @return L in first and U in second
-pair<matrix, matrix> LUdecompose_crout(matrix &a)
+/// @return matrix std::pair: L in first and U in second using Crout's
+std::pair<matrix, matrix> LUdecompose_crout(matrix &a)
 {
     if (!a.isSquare())
     {
-        cerr << "Cannot decompose." << endl;
+        std::cerr << "Cannot decompose." << std::endl;
         return {a, a};
     }
 
@@ -131,7 +131,7 @@ pair<matrix, matrix> LUdecompose_crout(matrix &a)
         for (int j = 0; j < a.columns; j++)
         {
             L[i][j] = 0;
-            U[i][j] = (i == j) ? 1 : 0;
+            U[i][j] = ((i == j) ? 1 : 0);
         }
     }
 
@@ -179,14 +179,12 @@ pair<matrix, matrix> LUdecompose_crout(matrix &a)
 }
 
 /// NOT FINISHED! <----<>---->
-/// @brief decomposes a square matrix into a pair of lower-triangular and upper-triangular matrix using Doliitle Decomposition
-/// such that L.U = Original Matrix
-/// @return L in first and U in second
-pair<matrix, matrix> LUdecompose_dolittle(matrix &a)
+/// @return matrix std::pair: L in first and U in second using Dolittle's
+std::pair<matrix, matrix> LUdecompose_dolittle(matrix &a)
 {
     if (!a.isSquare())
     {
-        cerr << "Cannot decompose." << endl;
+        std::cerr << "Cannot decompose." << std::endl;
         return {a, a};
     }
 
@@ -197,7 +195,7 @@ pair<matrix, matrix> LUdecompose_dolittle(matrix &a)
     {
         for (int j = 0; j < a.columns; j++)
         {
-            L[i][j] = (i == j) ? 1 : 0;
+            L[i][j] = ((i == j) ? 1 : 0);
             U[i][j] = 0;
         }
     }
@@ -245,36 +243,38 @@ pair<matrix, matrix> LUdecompose_dolittle(matrix &a)
     return {L, U};
 }
 
-/// @brief takes input of a matrix
-/// @param a matrix
-istream &operator>>(istream &in, matrix &a)
+std::istream &operator>>(std::istream &in, matrix &a)
 {
-    double x;
-    cout << "Enter number of rows: ";
-    in >> a.rows;
-    cout << "Enter number of columns: ";
-    in >> a.columns;
-    a.M = vector<vector<double>>(a.rows, vector<double>(a.columns));
+    while (a.rows <= 0)
+    {
+        std::cout << "Enter number of rows: ";
+        in >> a.rows;
+    }
+    while (a.columns <= 0)
+    {
+        std::cout << "Enter number of columns: ";
+        in >> a.columns;
+    }
+    a.M = std::vector<std::vector<double>>(a.rows, std::vector<double>(a.columns));
 
+    double x{0};
     for (int i = 0; i < a.rows; i++)
     {
         for (int j = 0; j < a.columns; j++)
         {
-            cout << "Enter value at (" << i + 1 << "," << j + 1 << ") : ";
+            std::cout << "Enter value at (" << i + 1 << "," << j + 1 << ") : ";
             in >> x;
             a.M[i][j] = x;
         }
     }
-
     return in;
 }
 
 /// @brief prints the matrix and also the rows and columns
-/// @param a matrix
-ostream &operator<<(ostream &out, matrix &a)
+std::ostream &operator<<(std::ostream &out, matrix &a)
 {
-    out << "Rows: " << a.rows << endl;
-    out << "Columns: " << a.columns << endl;
+    out << "Rows: " << a.rows << std::endl;
+    out << "Columns: " << a.columns << std::endl;
     out << "[";
     for (int i = 0; i < a.rows; i++)
     {
@@ -289,20 +289,19 @@ ostream &operator<<(ostream &out, matrix &a)
         if (i != a.rows - 1)
         {
             out << ",";
-            out << endl;
+            out << std::endl;
         }
     }
-    out << "]" << endl;
+    out << "]" << std::endl;
 
     return out;
 }
 
-// works
-matrix forward_sweep(matrix &A, matrix &B)
+matrix forwardSweep(matrix &A, matrix &B)
 {
     if (!B.isColumnvector() || A.rows != B.rows)
     {
-        cout << "Cannot evaluate: Dimensions invalid." << endl;
+        std::cout << "Cannot evaluate: Dimensions invalid." << std::endl;
         return A;
     }
     matrix X(A.rows, 1);
@@ -320,12 +319,11 @@ matrix forward_sweep(matrix &A, matrix &B)
     return X;
 }
 
-// works
-matrix backward_sweep(matrix &A, matrix &B)
+matrix backwardSweep(matrix &A, matrix &B)
 {
     if (!B.isColumnvector() || A.rows != B.rows)
     {
-        cout << "Cannot evaluate: Dimensions invalid." << endl;
+        std::cout << "Cannot evaluate: Dimensions invalid." << std::endl;
         return A;
     }
 
@@ -341,64 +339,6 @@ matrix backward_sweep(matrix &A, matrix &B)
         }
         X[i - 1][0] = (B[i - 1][0] - sum) / A[i - 1][i - 1];
     }
-    return X;
-}
-
-/// @brief solves the equation A.X = B using LU decompostion
-/// @param A Coefficient Matrix
-/// @param B Source Vector
-/// @return Solution Set of the equation
-matrix solveAXB(matrix &A, matrix &B)
-{
-    if (!B.isColumnvector() || A.rows != B.rows)
-    {
-        cerr << "Cannot compute." << endl;
-        return A;
-    }
-    matrix d, X;
-    pair<matrix, matrix> LU = LUdecompose_crout(A);
-
-    d = forward_sweep(LU.first, B);
-    X = backward_sweep(LU.second, d);
-    return X;
-}
-
-matrix solveAXB_gauss(matrix &A, matrix &B)
-{
-    if (!A.isSquare() || !B.isColumnvector() || A.rows != B.rows)
-    {
-        cerr << "Cannot solve the system: Invalid dimensions." << endl;
-        return A; // Return the original matrix as an error indicator.
-    }
-    matrix a = A, b = B;
-    int n = A.rows;
-    matrix X(n, 1);
-
-    // Forward elimination
-    for (int i = 0; i < n - 1; i++)
-    {
-        for (int k = i + 1; k < n; k++)
-        {
-            double factor = A[k][i] / A[i][i]; // issue occurs when diagonal element is 0
-            for (int j = i; j < n; j++)        // can be solved if we use pivot finding
-            {
-                a[k][j] -= factor * a[i][j];
-            }
-            b[k][0] -= factor * b[i][0];
-        }
-    }
-
-    // Backward substitution
-    for (int i = n - 1; i >= 0; i--)
-    {
-        double sum = 0;
-        for (int j = i + 1; j < n; j++)
-        {
-            sum += a[i][j] * X[j][0];
-        }
-        X[i][0] = (b[i][0] - sum) / a[i][i];
-    }
-
     return X;
 }
 
@@ -429,7 +369,7 @@ matrix matrix::operator+(matrix &a)
 {
     if (this->rows != a.rows || this->columns != a.columns)
     {
-        cerr << "Cannot evaluate. Invalid dimensions." << endl;
+        std::cerr << "Cannot evaluate. Invalid dimensions." << std::endl;
         return *this;
     }
     matrix b(this->rows, this->columns);
@@ -447,7 +387,7 @@ matrix matrix::operator-(matrix &a)
 {
     if (this->rows != a.rows || this->columns != a.columns)
     {
-        cerr << "Cannot evaluate. Invalid dimensions." << endl;
+        std::cerr << "Cannot evaluate. Invalid dimensions." << std::endl;
         return *this;
     }
     matrix b(this->rows, this->columns);
@@ -465,7 +405,7 @@ matrix matrix::operator*(const matrix &a) const
 {
     if (this->columns != a.rows)
     {
-        cerr << "Matrix multiplication not possible: Invalid dimensions." << endl;
+        std::cerr << "Matrix multiplication not possible: Invalid dimensions." << std::endl;
         return *this; // Return the original matrix as an error indicator.
     }
 
@@ -498,27 +438,26 @@ matrix matrix::operator/(double divisor)
     return *this;
 }
 
-matrix matrix::identity(int size)
+matrix matrix::operator*(double multiplicand)
 {
-    matrix b(size);
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < this->rows; i++)
     {
-        for (int j = 0; j < size; j++)
+        for (int j = 0; j < this->columns; j++)
         {
-            b[i][j] = (i == j) ? 1 : 0;
+            this->M[i][j] = this->M[i][j] * multiplicand;
         }
     }
-    return b;
+    return *this;
 }
 
 matrix matrix::operator^(int a)
 {
     if (!this->isSquare())
     {
-        cerr << "Cannot evaluate. Invalid dimensions." << endl;
+        std::cerr << "Cannot evaluate. Invalid dimensions." << std::endl;
         return *this;
     }
-    matrix b = identity(this->rows);
+    matrix b = identity_matrix(this->rows);
 
     for (int i = 0; i < a; i++)
     {
@@ -531,7 +470,7 @@ double matrix::determinant()
 {
     if (!this->isSquare())
     {
-        cerr << "Determinant calculation is only valid for square matrices." << endl;
+        std::cerr << "Determinant calculation is only valid for square matrices." << std::endl;
         return 0.0;
     }
 
@@ -585,14 +524,94 @@ matrix matrix::cofactormatrix(int row, int col)
 
 matrix transpose(matrix &A)
 {
-    matrix B(A.columns, A.rows);
-    for (int i = 0; i < A.rows; i++)
+    matrix B(A.get_columns(), A.get_rows());
+    for (int i = 0; i < A.get_rows(); i++)
     {
-        for (int j = 0; j < A.columns; j++)
+        for (int j = 0; j < A.get_columns(); j++)
         {
             B[j][i] = A[i][j];
         }
     }
     return B;
+}
+
+/// TODO: check both solveAXB_LU and gauss
+/// @brief solves the equation A.X = B using LU decompostion
+/// @param A Coefficient Matrix
+/// @param B Source Vector
+/// @return Solution Set of the equation
+matrix solveAXB_LU(matrix &A, matrix &B)
+{
+    // std::cout << "solveAXB_LU called\n";
+    if (!B.isColumnvector() || A.get_rows() != B.get_rows())
+    {
+        std::cerr << "Cannot compute." << std::endl;
+        return A;
+    }
+    matrix d, X;
+    std::pair<matrix, matrix> LU = LUdecompose_crout(A);
+    // std::cout << "L: \n"
+    //           << LU.first
+    //           << "\n\nU:\n"
+    //           << LU.second << '\n';
+    d = forwardSweep(LU.first, B);
+    // std::cout << "d:\n"
+    //           << d << '\n';
+    X = backwardSweep(LU.second, d);
+    // std::cout << "\nX:\n"
+    //           << X << '\n';
+    return X;
+}
+
+matrix solveAXB_gauss(matrix &A, matrix &B)
+{
+    if (!A.isSquare() || !B.isColumnvector() || A.get_rows() != B.get_rows())
+    {
+        std::cerr << "Cannot solve the system: Invalid dimensions." << std::endl;
+        return A; // Return the original matrix as an error indicator.
+    }
+    matrix a = A, b = B;
+    int n = A.get_rows();
+    matrix X(n, 1);
+
+    // Forward elimination
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int k = i + 1; k < n; k++)
+        {
+            double factor = A[k][i] / A[i][i]; // issue occurs when diagonal element is 0
+            for (int j = i; j < n; j++)        // can be solved if we use pivot finding
+            {
+                a[k][j] -= factor * a[i][j];
+            }
+            b[k][0] -= factor * b[i][0];
+        }
+    }
+
+    // Backward substitution
+    for (int i = n - 1; i >= 0; i--)
+    {
+        double sum = 0;
+        for (int j = i + 1; j < n; j++)
+        {
+            sum += a[i][j] * X[j][0];
+        }
+        X[i][0] = (b[i][0] - sum) / a[i][i];
+    }
+
+    return X;
+}
+
+/// TODO: TEST THIS PART CORRECTLY becasuse this is not letting me use gauss method
+// enum solvetype { LU, gauss };
+matrix solveAXB(matrix &A, matrix &B, std::string solveType = "LU")
+{
+    if (solveType == "LU")
+        return solveAXB_LU(A, B);
+
+    if (solveType == "gauss")
+        return solveAXB_gauss(A, B);
+
+    return solveAXB_LU(A, B);
 }
 #endif
